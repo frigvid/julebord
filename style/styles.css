@@ -1,0 +1,355 @@
+:root {
+	--night-top: #070d2b;
+	--night-mid: #14235a;
+	--night-low: #2b3f85;
+	--night-horizon: #5a6fb0;
+	--red: #d3132f;
+	--gold: #ffd35c;
+	--glass: rgba(7, 13, 43, 0.62);
+	--heading-font: "Mountains of Christmas", "Trebuchet MS", "Segoe UI", system-ui, cursive;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+	overflow-x: hidden;
+	background: var(--night-top);
+	color: #fff;
+	font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+	-webkit-text-size-adjust: 100%;
+}
+
+#sky,
+#stars,
+canvas#scenery-canvas,
+canvas#snow-back-canvas,
+canvas#snow-front-canvas {
+	position: fixed;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+}
+
+#sky {
+	z-index: 0;
+	background: linear-gradient(180deg, var(--night-top) 0%, var(--night-mid) 45%, var(--night-low) 75%, var(--night-horizon) 100%);
+}
+
+#stars {
+	z-index: 0;
+}
+
+.star {
+	position: absolute;
+	border-radius: 50%;
+	background: #fff;
+	opacity: 0.3;
+	animation: twinkle 3s ease-in-out infinite alternate;
+}
+
+@keyframes twinkle {
+	from {
+		opacity: 0.15;
+		transform: scale(0.8);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1.2);
+	}
+}
+
+canvas#scenery-canvas {
+	z-index: 1;
+}
+
+canvas#snow-back-canvas {
+	z-index: 2;
+}
+
+canvas#snow-front-canvas {
+	z-index: 5;
+}
+
+canvas {
+	opacity: 0;
+	transition: opacity 0.8s ease;
+}
+
+canvas.visible {
+	opacity: 1;
+}
+
+.lights {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 52px;
+	z-index: 6;
+	display: flex;
+	overflow: hidden;
+	pointer-events: none;
+	transition: opacity 0.4s ease;
+}
+
+.lights.off {
+	opacity: 0;
+}
+
+.light-seg {
+	position: relative;
+	flex: 0 0 auto;
+	width: 120px;
+	height: 100%;
+}
+
+.light-seg::before {
+	content: "";
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: -22px;
+	height: 44px;
+	border-bottom: 2px solid #0b0b12;
+	border-radius: 0 0 50% 50% / 0 0 100% 100%;
+}
+
+.bulb {
+	position: absolute;
+	width: 10px;
+	height: 16px;
+	margin-left: -5px;
+	border-radius: 50% 50% 55% 55%;
+	background: var(--c);
+	box-shadow: 0 0 10px 2px var(--c);
+	animation: bulb 1.8s ease-in-out infinite alternate;
+}
+
+@keyframes bulb {
+	from {
+		opacity: 0.45;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+.page {
+	position: relative;
+	z-index: 4;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 18px;
+	min-height: 100vh;
+	min-height: 100dvh;
+	padding: 76px 16px calc(28px + env(safe-area-inset-bottom));
+}
+
+.hero {
+	text-align: center;
+}
+
+.hero h1 {
+	margin: 0;
+	font-family: var(--heading-font);
+	font-size: clamp(2.6rem, 10vw, 5rem);
+	line-height: 1.05;
+	letter-spacing: 0.01em;
+	color: #fff;
+	text-shadow: 0 0 22px rgba(255, 255, 255, 0.35), 0 3px 0 #8f0c20, 0 6px 18px rgba(0, 0, 0, 0.5);
+}
+
+.tagline {
+	margin: 8px 0 0;
+	font-size: clamp(1rem, 3.6vw, 1.25rem);
+	color: var(--gold);
+	text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+.card {
+	width: 100%;
+	max-width: 680px;
+	padding: 10px;
+	border-radius: 22px;
+	background: repeating-linear-gradient(-45deg, var(--red) 0 14px, #fff 14px 28px);
+	box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(255, 211, 92, 0.15);
+}
+
+.card-inner {
+	overflow: hidden;
+	border-radius: 14px;
+	background: #fff;
+}
+
+.pill {
+	margin: 0;
+	padding: 8px 16px;
+	border-radius: 999px;
+	background: var(--glass);
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
+	font-size: 0.85rem;
+	text-align: center;
+}
+
+.pill a {
+	color: var(--gold);
+}
+
+.credits {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 2px 8px;
+	color: rgba(255, 255, 255, 0.85);
+}
+
+.menu {
+	position: fixed;
+	top: max(54px, calc(env(safe-area-inset-top) + 54px));
+	right: max(12px, env(safe-area-inset-right));
+	z-index: 10;
+	display: flex;
+	gap: 8px;
+}
+
+.menu-button {
+	width: 44px;
+	height: 44px;
+	border: none;
+	border-radius: 999px;
+	background: rgba(255, 255, 255, 0.16);
+	color: rgba(255, 255, 255, 0.85);
+	backdrop-filter: blur(6px);
+	-webkit-backdrop-filter: blur(6px);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	transition: background 0.2s ease, color 0.2s ease;
+}
+
+.menu-button:hover,
+.menu-button:focus-visible {
+	background: rgba(255, 255, 255, 0.3);
+	color: #fff;
+}
+
+.menu-button svg {
+	fill: currentColor;
+}
+
+#music-toggle .icon-off,
+#music-toggle[aria-pressed="true"] .icon-on {
+	display: block;
+}
+
+#music-toggle .icon-on,
+#music-toggle[aria-pressed="true"] .icon-off {
+	display: none;
+}
+
+.menu-panel {
+	position: absolute;
+	top: calc(100% + 8px);
+	right: 0;
+	min-width: 150px;
+	padding: 10px 14px;
+	border-radius: 14px;
+	background: rgba(255, 255, 255, 0.85);
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
+}
+
+.menu-panel[hidden] {
+	display: none;
+}
+
+.menu-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	padding: 6px 0;
+	font-size: 14px;
+	line-height: 1.2;
+	color: #222;
+	user-select: none;
+}
+
+.menu-row input[type="checkbox"] {
+	width: 20px;
+	height: 20px;
+	accent-color: var(--red);
+	cursor: pointer;
+}
+
+.music-hint {
+	position: fixed;
+	left: 50%;
+	bottom: max(18px, calc(env(safe-area-inset-bottom) + 12px));
+	transform: translateX(-50%);
+	z-index: 10;
+	max-width: calc(100% - 32px);
+	padding: 12px 20px;
+	border: 1px solid rgba(255, 255, 255, 0.35);
+	border-radius: 999px;
+	background: var(--glass);
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
+	color: #fff;
+	font: inherit;
+	font-size: 0.95rem;
+	cursor: pointer;
+	animation: hint-pulse 2s ease-in-out infinite;
+}
+
+.music-hint[hidden] {
+	display: none;
+}
+
+@keyframes hint-pulse {
+	50% {
+		box-shadow: 0 0 0 8px rgba(255, 211, 92, 0.18);
+	}
+}
+
+@media (max-width: 480px) {
+	.page {
+		padding-top: 68px;
+		gap: 14px;
+	}
+
+	.card {
+		padding: 7px;
+		border-radius: 18px;
+	}
+
+	.card-inner {
+		border-radius: 12px;
+	}
+
+	.menu {
+		top: max(50px, calc(env(safe-area-inset-top) + 50px));
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.star,
+	.bulb,
+	.music-hint {
+		animation: none;
+	}
+
+	canvas {
+		transition-duration: 0.3s;
+	}
+}

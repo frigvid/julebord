@@ -1,0 +1,25 @@
+/* Ugly "fix" for my arch-nemesis: branding. */
+.card {
+	--form-height: clamp(560px, 80vh, 860px);
+	--form-height: clamp(560px, 80dvh, 860px);
+	--branding-footer-height: 160px;
+	--scrollbar-width: 20px;
+}
+
+.card-inner {
+	height: var(--form-height);
+}
+
+.card iframe {
+	display: block;
+	width: calc(100% + var(--scrollbar-width));
+	height: calc(var(--form-height) + var(--branding-footer-height));
+	border: 0;
+}
+
+@media (max-width: 480px) {
+	.card {
+		--form-height: clamp(520px, 78vh, 820px);
+		--form-height: clamp(520px, 78dvh, 820px);
+	}
+}
