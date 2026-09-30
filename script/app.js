@@ -1,4 +1,13 @@
 (function () {
+	function stubOf(methodNames) {
+		return Object.fromEntries(methodNames.map((name) => [name, () => {}]));
+	}
+
+	const Snow = window.Snow || stubOf(['setup', 'resize', 'setEnabled', 'tick']);
+	const Scenery = window.Scenery || stubOf(['setup', 'draw', 'buildStars', 'buildLights']);
+	const Music = window.Music || stubOf(['init', 'setEnabled', 'toggle']);
+	const effectsBlocked = [window.Snow, window.Scenery, window.Music].some((piece) => !piece);
+
 	const sceneryCanvas = document.getElementById('scenery-canvas');
 	const backCanvas = document.getElementById('snow-back-canvas');
 	const frontCanvas = document.getElementById('snow-front-canvas');
@@ -13,8 +22,21 @@
 	const toggleSnow = document.getElementById('toggle-snow');
 	const toggleLights = document.getElementById('toggle-lights');
 
+	const blockedToast = document.getElementById('blocked-toast');
+	const blockedToastClose = document.getElementById('blocked-toast-close');
+
 	const MAX_DPR = 2;
+	const TOAST_DURATION_MS = 15000;
 	const dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR);
+
+	function hideBlockedToast() {
+		blockedToast.hidden = true;
+	}
+
+	function showBlockedToast() {
+		blockedToast.hidden = false;
+		setTimeout(hideBlockedToast, TOAST_DURATION_MS);
+	}
 
 	function sizeCanvases() {
 		const vw = window.innerWidth;
@@ -103,6 +125,9 @@
 			toggleMusic.checked = wanted;
 		},
 	});
+
+	blockedToastClose.addEventListener('click', hideBlockedToast);
+	if (effectsBlocked) showBlockedToast();
 
 	canvases.forEach((c) => c.classList.add('visible'));
 	last = performance.now();

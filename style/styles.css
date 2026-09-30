@@ -322,6 +322,51 @@ canvas.visible {
 	}
 }
 
+.toast {
+	position: fixed;
+	right: max(16px, env(safe-area-inset-right));
+	bottom: max(16px, calc(env(safe-area-inset-bottom) + 12px));
+	z-index: 10;
+	width: min(360px, calc(100% - 32px));
+	padding: 14px 44px 14px 16px;
+	border: 1px solid rgba(255, 255, 255, 0.25);
+	border-radius: 16px;
+	background: var(--glass);
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
+	font-size: 0.9rem;
+	line-height: 1.4;
+}
+
+.toast[hidden] {
+	display: none;
+}
+
+.toast p {
+	margin: 0;
+}
+
+.toast-close {
+	position: absolute;
+	top: 6px;
+	right: 6px;
+	width: 32px;
+	height: 32px;
+	border: none;
+	border-radius: 999px;
+	background: transparent;
+	color: rgba(255, 255, 255, 0.8);
+	font-size: 1.4rem;
+	line-height: 1;
+	cursor: pointer;
+}
+
+.toast-close:hover,
+.toast-close:focus-visible {
+	background: rgba(255, 255, 255, 0.16);
+	color: #fff;
+}
+
 @media (max-width: 480px) {
 	.page {
 		padding-top: 68px;
@@ -339,6 +384,10 @@ canvas.visible {
 
 	.menu {
 		top: max(50px, calc(env(safe-area-inset-top) + 50px));
+	}
+
+	.toast {
+		bottom: calc(env(safe-area-inset-bottom) + 76px);
 	}
 }
 
