@@ -2,8 +2,8 @@
 .card {
 	--form-height: clamp(560px, 80vh, 860px);
 	--form-height: clamp(560px, 80dvh, 860px);
-	--branding-footer-height: 160px;
-	--scrollbar-width: 20px;
+	--branding-footer-height: 0px;
+	--scrollbar-width: 0px;
 }
 
 .card-inner {
@@ -15,6 +15,13 @@
 	width: calc(100% + var(--scrollbar-width));
 	height: calc(var(--form-height) + var(--branding-footer-height));
 	border: 0;
+}
+
+@media (min-width: 768px) {
+	.card {
+		--branding-footer-height: 160px;
+		--scrollbar-width: 20px;
+	}
 }
 
 @media (max-width: 480px) {
