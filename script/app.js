@@ -5,7 +5,10 @@
 
 	const Snow = window.Snow || stubOf(['setup', 'resize', 'setEnabled', 'tick']);
 	const Scenery = window.Scenery || stubOf(['setup', 'draw', 'buildStars', 'buildLights']);
-	const Music = window.Music || stubOf(['init', 'setEnabled', 'toggle']);
+	const Music = window.Music || stubOf(['init', 'setEnabled', 'toggle', 'isPlaying']);
+	const Santa = window.Santa || stubOf(['setup']);
+	const Attributions = window.Attributions || stubOf(['init', 'open']);
+	const Splash = window.Splash || { isEnabled: () => true, setEnabled: () => {} };
 	const effectsBlocked = [window.Snow, window.Scenery, window.Music].some((piece) => !piece);
 
 	const sceneryCanvas = document.getElementById('scenery-canvas');
@@ -21,12 +24,15 @@
 	const toggleMusic = document.getElementById('toggle-music');
 	const toggleSnow = document.getElementById('toggle-snow');
 	const toggleLights = document.getElementById('toggle-lights');
+	const toggleSplash = document.getElementById('toggle-splash');
+	const openAttributions = document.getElementById('open-attributions');
 
 	const blockedToast = document.getElementById('blocked-toast');
 	const blockedToastClose = document.getElementById('blocked-toast-close');
 
 	const MAX_DPR = 2;
 	const TOAST_DURATION_MS = 15000;
+	const SPLASH_WAIT_LIMIT_MS = 12000;
 	const dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR);
 
 	function hideBlockedToast() {
@@ -91,6 +97,15 @@
 	toggleMusic.addEventListener('change', () => Music.setEnabled(toggleMusic.checked));
 	musicToggle.addEventListener('click', () => Music.toggle());
 
+	toggleSplash.checked = Splash.isEnabled();
+	toggleSplash.addEventListener('change', () => Splash.setEnabled(toggleSplash.checked));
+
+	Attributions.init();
+	openAttributions.addEventListener('click', () => {
+		closeMenu();
+		Attributions.open();
+	});
+
 	let last = 0;
 	function frame(now) {
 		if (document.hidden) {
@@ -104,32 +119,44 @@
 		requestAnimationFrame(frame);
 	}
 
-	sizeCanvases();
-	Scenery.setup(sceneryCanvas);
-	Scenery.draw();
-	Scenery.buildStars(stars);
-	lastWidth = window.innerWidth;
-	Scenery.buildLights(lights);
-	Snow.setup(backCanvas, frontCanvas, dpr);
-	Snow.setEnabled(toggleSnow.checked);
+	let started = false;
+	function start() {
+		if (started) return;
+		started = true;
 
-	window.addEventListener('resize', onWindowResize);
-	window.addEventListener('orientationchange', onWindowResize);
+		sizeCanvases();
+		Scenery.setup(sceneryCanvas);
+		Scenery.draw();
+		Scenery.buildStars(stars);
+		lastWidth = window.innerWidth;
+		Scenery.buildLights(lights);
+		Snow.setup(backCanvas, frontCanvas, dpr);
+		Snow.setEnabled(toggleSnow.checked);
 
-	Music.init({
-		hintEl: document.getElementById('music-hint'),
-		nowPlayingEl: document.getElementById('now-playing'),
-		artistEl: document.getElementById('now-playing-artist'),
-		onChange({ playing, wanted }) {
-			musicToggle.setAttribute('aria-pressed', String(playing));
-			toggleMusic.checked = wanted;
-		},
-	});
+		window.addEventListener('resize', onWindowResize);
+		window.addEventListener('orientationchange', onWindowResize);
 
-	blockedToastClose.addEventListener('click', hideBlockedToast);
-	if (effectsBlocked) showBlockedToast();
+		Music.init({
+			hintEl: document.getElementById('music-hint'),
+			nowPlayingEl: document.getElementById('now-playing'),
+			artistEl: document.getElementById('now-playing-artist'),
+			onChange({ playing, wanted }) {
+				musicToggle.setAttribute('aria-pressed', String(playing));
+				toggleMusic.checked = wanted;
+			},
+		});
 
-	canvases.forEach((c) => c.classList.add('visible'));
-	last = performance.now();
-	requestAnimationFrame(frame);
+		Santa.setup(document.getElementById('santa'), { canPlaySound: () => Music.isPlaying() });
+
+		blockedToastClose.addEventListener('click', hideBlockedToast);
+		if (effectsBlocked) showBlockedToast();
+
+		canvases.forEach((c) => c.classList.add('visible'));
+		last = performance.now();
+		requestAnimationFrame(frame);
+	}
+
+	document.addEventListener('splash-finished', start, { once: true });
+	setTimeout(start, SPLASH_WAIT_LIMIT_MS);
+	if (!document.getElementById('splash')) start();
 })();

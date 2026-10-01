@@ -1,0 +1,7 @@
+Remix of Michael Rodionov's Christmas tree (christmas_tree.riv).
+- Source: https://rive.app/marketplace/15669-29559-christmas-tree/.
+- License: https://creativecommons.org/licenses/by/4.0/.
+
+MJ Mograph's Santa Claus Sleigh Ride (santa-sleigh.mp4).
+- Source: https://lottiefiles.com/free-animation/santa-claus-sleigh-ride-i7jdZYVSCd.
+- License: https://lottiefiles.com/page/license.

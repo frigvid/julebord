@@ -13,12 +13,23 @@
 		rel="stylesheet" />
 	<link rel="stylesheet" href="style/styles.css" />
 	<link rel="stylesheet" href="style/form.css" />
+	<link rel="stylesheet" href="style/attributions.css" />
+	<link rel="preload" as="script" href="script/lib/rive.js" />
+	<link rel="preload" as="fetch" href="script/lib/rive.wasm" crossorigin />
+	<link rel="preload" as="fetch" href="assets/animation/christmas_tree.riv" crossorigin />
 </head>
 <body>
+	<div id="splash" class="splash" role="status" aria-label="Laster inn">
+		<canvas id="splash-canvas"></canvas>
+		<button id="splash-skip" class="splash-skip" type="button">Hopp over</button>
+	</div>
+	<script src="script/lib/rive.js"></script>
+	<script src="script/splash.js"></script>
 	<div id="sky" aria-hidden="true"></div>
 	<div id="stars" aria-hidden="true"></div>
 	<canvas id="scenery-canvas" aria-hidden="true"></canvas>
 	<canvas id="snow-back-canvas" aria-hidden="true"></canvas>
+	<img id="santa" data-src="assets/animation/santa-sleigh.webp" alt="" aria-hidden="true" hidden>
 	<div id="lights" class="lights" aria-hidden="true"></div>
 	<main class="page">
 		<header class="hero">
@@ -75,6 +86,11 @@
 				<span>Lys</span>
 				<input type="checkbox" id="toggle-lights" checked />
 			</label>
+			<label class="menu-row" title="Gjelder neste gang du åpner siden">
+				<span>Åpningsskjerm</span>
+				<input type="checkbox" id="toggle-splash" />
+			</label>
+			<button type="button" class="menu-link" id="open-attributions">Attribusjoner</button>
 		</div>
 	</div>
 	<button id="music-hint" class="music-hint" type="button" hidden>
@@ -85,9 +101,23 @@
 		<button id="blocked-toast-close" class="toast-close" type="button" aria-label="Lukk">&times;</button>
 	</div>
 
+	<div id="attributions-dialog" class="dialog-backdrop" hidden>
+		<div class="dialog" role="dialog" aria-modal="true" aria-labelledby="attributions-title">
+			<div class="dialog-inner">
+				<div class="dialog-header">
+					<h2 id="attributions-title">Attribusjoner</h2>
+					<button id="attributions-close" class="dialog-close" type="button" aria-label="Lukk">&times;</button>
+				</div>
+				<div class="dialog-body" id="attributions-body"></div>
+			</div>
+		</div>
+	</div>
+	<script src="data/attributions.js"></script>
 	<script src="script/snow.js"></script>
 	<script src="script/scenery.js"></script>
+	<script src="script/santa.js"></script>
 	<script src="script/music.js"></script>
+	<script src="script/attributions.js"></script>
 	<script src="script/app.js"></script>
 </body>
 </html>

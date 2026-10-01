@@ -150,6 +150,10 @@
 			emit();
 		},
 
+		isPlaying() {
+			return playing;
+		},
+
 		toggle() {
 			const shouldPlay = !playing;
 			Music.setEnabled(shouldPlay);

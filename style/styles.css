@@ -72,6 +72,70 @@ canvas#snow-back-canvas {
 	z-index: 2;
 }
 
+#santa {
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 3;
+	width: clamp(120px, 10vw, 170px);
+	height: auto;
+	pointer-events: none;
+	will-change: transform;
+}
+
+.splash {
+	position: fixed;
+	inset: 0;
+	z-index: 100;
+	background: #ebebeb;
+	transition: opacity 1.8s ease-in-out;
+	animation: splash-failsafe 0.01s 15s forwards;
+}
+
+.splash.is-fading {
+	opacity: 0;
+	pointer-events: none;
+}
+
+.splash.is-skipped {
+	transition-duration: 0.5s;
+}
+
+@keyframes splash-failsafe {
+	to {
+		opacity: 0;
+		visibility: hidden;
+	}
+}
+
+.splash-skip {
+	position: absolute;
+	right: max(16px, env(safe-area-inset-right));
+	bottom: max(16px, calc(env(safe-area-inset-bottom) + 12px));
+	padding: 6px 14px;
+	border: none;
+	border-radius: 999px;
+	background: rgba(0, 0, 0, 0.06);
+	color: rgba(0, 0, 0, 0.4);
+	font: inherit;
+	font-size: 0.8rem;
+	cursor: pointer;
+	transition: background 0.2s ease, color 0.2s ease;
+}
+
+.splash-skip:hover,
+.splash-skip:focus-visible {
+	background: rgba(0, 0, 0, 0.14);
+	color: rgba(0, 0, 0, 0.7);
+}
+
+.splash canvas {
+	display: block;
+	width: 100%;
+	height: 100%;
+	opacity: 1;
+}
+
 canvas#snow-front-canvas {
 	z-index: 5;
 }

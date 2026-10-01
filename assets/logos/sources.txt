@@ -1,0 +1,3 @@
+Simple Icons' Rive icon (rive.svg).
+- Source: https://github.com/simple-icons/simple-icons/blob/develop/icons/rive.svg.
+- License: https://creativecommons.org/publicdomain/zero/1.0/.

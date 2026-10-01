@@ -1,0 +1,3 @@
+Rive's web runtime (rive.js, rive.wasm).
+- Source: https://unpkg.com/@rive-app/webgl2@2.40.1/.
+- License: https://github.com/rive-app/rive-wasm/blob/master/LICENSE.
