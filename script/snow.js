@@ -1,12 +1,25 @@
 (function () {
 	const LAYERS = [
-		{ canvas: 'back', share: 0.5, size: [3, 6], speed: [14, 26], alpha: [0.35, 0.65], wind: 0.5, crystal: false },
-		{ canvas: 'back', share: 0.38, size: [9, 17], speed: [26, 46], alpha: [0.55, 0.9], wind: 1, crystal: true },
-		{ canvas: 'front', share: 0.12, size: [18, 30], speed: [48, 80], alpha: [0.3, 0.6], wind: 1.6, crystal: true },
+		{ canvas: 'back', share: 0.5, size: [3, 6], speed: [14, 26], alpha: [0.35, 0.65], wind: 0.5, react: 0.45, crystal: false },
+		{ canvas: 'back', share: 0.38, size: [9, 17], speed: [26, 46], alpha: [0.55, 0.9], wind: 1, react: 1, crystal: true },
+		{ canvas: 'front', share: 0.12, size: [18, 30], speed: [48, 80], alpha: [0.3, 0.6], wind: 1.6, react: 1.6, crystal: true },
 	];
 
 	const CRYSTAL_VARIANTS = 8;
 	const SPRITE_PX = 64;
+
+	const POINTER_RADIUS = 130;
+	const POINTER_PUSH_ACCEL = 700;
+	const POINTER_BASE_PUSH = 0.3;
+	const POINTER_SWIRL = 0.5;
+	const POINTER_DRAG = 2;
+	const POINTER_MAX_SPEED = 1200;
+	const POINTER_SPEED_FOR_FULL_EFFECT = 600;
+	const POINTER_SPEED_SMOOTHING = 0.35;
+	const POINTER_SPEED_DECAY = 6;
+	const FLAKE_DAMPING = 2.2;
+	const FLAKE_MAX_EXTRA_SPEED = 420;
+	const TUMBLE_FROM_MOTION = 0.01;
 
 	const ctxs = {};
 	let dpr = 1;
@@ -17,8 +30,7 @@
 	let enabled = true;
 	let reducedMotion = false;
 	let time = 0;
-	let pointerWind = 0;
-	let lastPointerX = null;
+	const pointer = { x: 0, y: 0, vx: 0, vy: 0, lastMoveAt: 0, active: false };
 
 	function randRange(a, b) {
 		return a + Math.random() * (b - a);
@@ -124,6 +136,8 @@
 			y: anywhere ? randRange(-size, vh) : -size - randRange(0, vh * 0.2),
 			size,
 			speed: randRange(L.speed[0], L.speed[1]) * speedMul,
+			vx: 0,
+			vy: 0,
 			angle: randRange(0, Math.PI * 2),
 			spin: reducedMotion ? 0 : randRange(8, 40) * (Math.PI / 180) * (Math.random() < 0.5 ? -1 : 1),
 			driftAmp: randRange(6, 16) * L.wind,
@@ -144,12 +158,53 @@
 		});
 	}
 
+	function clampSpeed(value) {
+		return Math.max(-POINTER_MAX_SPEED, Math.min(POINTER_MAX_SPEED, value));
+	}
+
 	function onPointerMove(e) {
-		if (e.pointerType !== 'mouse') return;
-		if (lastPointerX !== null) {
-			pointerWind = Math.max(-90, Math.min(90, pointerWind + (e.clientX - lastPointerX) * 0.5));
+		if (e.pointerType === 'touch') return;
+		const now = performance.now();
+		if (pointer.active) {
+			const elapsed = Math.max((now - pointer.lastMoveAt) / 1000, 0.008);
+			const velocityX = clampSpeed((e.clientX - pointer.x) / elapsed);
+			const velocityY = clampSpeed((e.clientY - pointer.y) / elapsed);
+			pointer.vx += (velocityX - pointer.vx) * POINTER_SPEED_SMOOTHING;
+			pointer.vy += (velocityY - pointer.vy) * POINTER_SPEED_SMOOTHING;
 		}
-		lastPointerX = e.clientX;
+		pointer.x = e.clientX;
+		pointer.y = e.clientY;
+		pointer.lastMoveAt = now;
+		pointer.active = true;
+	}
+
+	function onPointerOut(e) {
+		if (!e.relatedTarget) pointer.active = false;
+	}
+
+	function pushFlake(flake, reach, energy, dt) {
+		const dx = flake.x - pointer.x;
+		const dy = flake.y - pointer.y;
+		const distance = Math.hypot(dx, dy);
+		if (distance >= POINTER_RADIUS || distance < 1) return;
+
+		const falloff = 1 - distance / POINTER_RADIUS;
+		const awayX = dx / distance;
+		const awayY = dy / distance;
+		const side = pointer.vx * dy - pointer.vy * dx >= 0 ? 1 : -1;
+		const push = falloff * falloff * POINTER_PUSH_ACCEL * energy * reach;
+		const swirl = push * POINTER_SWIRL * side;
+		const drag = falloff * POINTER_DRAG * reach;
+
+		flake.vx += (awayX * push - awayY * swirl + pointer.vx * drag) * dt;
+		flake.vy += (awayY * push + awayX * swirl + pointer.vy * drag) * dt;
+
+		const extraSpeed = Math.hypot(flake.vx, flake.vy);
+		if (extraSpeed > FLAKE_MAX_EXTRA_SPEED) {
+			const scale = FLAKE_MAX_EXTRA_SPEED / extraSpeed;
+			flake.vx *= scale;
+			flake.vy *= scale;
+		}
 	}
 
 	const Snow = {
@@ -163,6 +218,7 @@
 			for (let i = 0; i < CRYSTAL_VARIANTS; i++) crystals.push(makeCrystalSprite());
 			dot = makeDotSprite();
 			window.addEventListener('pointermove', onPointerMove, { passive: true });
+			document.addEventListener('pointerout', onPointerOut);
 			ready = true;
 			fill(window.innerWidth, window.innerHeight, true);
 		},
@@ -192,16 +248,26 @@
 			if (!enabled) return;
 
 			time += dt;
-			pointerWind *= Math.exp(-dt * 1.5);
 			const gust = reducedMotion ? 0 : Math.sin(time * 0.13) * 12 + Math.sin(time * 0.37 + 1) * 6;
-			const wind = gust + pointerWind;
+
+			const pointerSpeed = Math.hypot(pointer.vx, pointer.vy);
+			const speedShare = Math.min(pointerSpeed / POINTER_SPEED_FOR_FULL_EFFECT, 1);
+			const pointerEnergy = POINTER_BASE_PUSH + (1 - POINTER_BASE_PUSH) * speedShare;
+			const pointerLive = pointer.active && !reducedMotion;
+			const pointerDecay = Math.exp(-POINTER_SPEED_DECAY * dt);
+			pointer.vx *= pointerDecay;
+			pointer.vy *= pointerDecay;
+			const damping = Math.exp(-FLAKE_DAMPING * dt);
 
 			for (let i = 0; i < flakes.length; i++) {
 				const f = flakes[i];
 				const L = LAYERS[f.layer];
-				f.y += f.speed * dt;
-				f.angle += f.spin * dt;
-				f.x += (Math.sin(f.driftPhase + f.y * 0.012) * f.driftAmp + wind * L.wind) * dt;
+				if (pointerLive) pushFlake(f, L.react, pointerEnergy, dt);
+				f.vx *= damping;
+				f.vy *= damping;
+				f.y += (f.speed + f.vy) * dt;
+				f.angle += (f.spin + Math.sign(f.spin || 1) * Math.hypot(f.vx, f.vy) * TUMBLE_FROM_MOTION) * dt;
+				f.x += (Math.sin(f.driftPhase + f.y * 0.012) * f.driftAmp + gust * L.wind + f.vx) * dt;
 				if (f.y - f.size > vh) {
 					flakes[i] = spawn(f.layer, vw, vh, false);
 					continue;
