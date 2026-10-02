@@ -45,13 +45,32 @@ window.ATTRIBUTIONS = [
 		],
 	},
 	{
+		group: 'Bilder',
+		entries: [
+			{
+				icon: 'assets/images/gift-yellow.svg',
+				title: 'Gavepakke',
+				creator: 'Noto Emoji',
+				detail: 'Apache-lisens 2.0.',
+				url: 'https://github.com/googlefonts/noto-emoji/blob/main/2D/svg/emoji_u1f381.svg',
+			},
+			{
+				icon: 'assets/images/cookie.svg',
+				title: 'Kjeks',
+				creator: 'Google (Noto Emoji)',
+				detail: 'Apache-lisens 2.0.',
+				url: 'https://github.com/googlefonts/noto-emoji/blob/main/2D/svg/emoji_u1f36a.svg',
+			},
+		],
+	},
+	{
 		group: 'Programvare',
 		entries: [
 			{
 				icon: 'assets/logos/rive.svg',
 				title: 'Rives web runtime 2.40.1',
 				creator: 'Rive',
-				detail: 'MIT-lisens, opphavsrett (c) 2020-2021 Rive. Logoen er fra Simple Icons (CC0), men Rive-merket tilhører Rive.',
+				detail: 'MIT-lisens, logoopphavsrett tilhører Rive. Logoen er hentet fra Simple Icons (CC0).',
 				url: 'https://github.com/rive-app/rive-wasm/blob/master/LICENSE',
 			},
 		],

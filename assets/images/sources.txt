@@ -1,0 +1,7 @@
+Noto Emoji's present box (gift-*.svg).
+- Source: https://github.com/googlefonts/noto-emoji/blob/main/2D/svg/emoji_u1f381.svg.
+- License: https://www.apache.org/licenses/LICENSE-2.0.
+
+Noto Emoji's cookie (cookie.svg).
+- Source: https://github.com/googlefonts/noto-emoji/blob/main/2D/svg/emoji_u1f36a.svg.
+- License: https://www.apache.org/licenses/LICENSE-2.0.

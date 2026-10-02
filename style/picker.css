@@ -9,6 +9,7 @@
 	flex-wrap: wrap;
 	justify-content: center;
 	gap: 22px;
+	pointer-events: auto;
 }
 
 .tile {
