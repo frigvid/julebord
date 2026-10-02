@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+	<meta charset="UTF-8" />
+	<base href="../" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+	<meta name="theme-color" content="#070d2b" />
+	<title>HE Julebord</title>
+	<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%84%3C/text%3E%3C/svg%3E" />
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+	<link href="https://fonts.googleapis.com/css2?family=Mountains+of+Christmas:wght@700&display=swap" rel="stylesheet" />
+	<link rel="stylesheet" href="style/styles.css" />
+	<link rel="stylesheet" href="style/form.css" />
+	<link rel="stylesheet" href="style/attributions.css" />
+	<link rel="preload" as="script" href="script/lib/rive.js" />
+	<link rel="preload" as="fetch" href="script/lib/rive.wasm" crossorigin />
+	<link rel="preload" as="fetch" href="assets/animation/christmas_tree.riv" crossorigin />
+</head>
+<body>
+	<div id="splash" class="splash" role="status" aria-label="Laster inn">
+		<canvas id="splash-canvas"></canvas>
+		<button id="splash-skip" class="splash-skip" type="button">Hopp over</button>
+	</div>
+	<script src="script/lib/rive.js"></script>
+	<script src="script/splash.js"></script>
+	<div id="sky" aria-hidden="true"></div>
+	<div id="stars" aria-hidden="true"></div>
+	<canvas id="scenery-canvas" aria-hidden="true"></canvas>
+	<canvas id="snow-back-canvas" aria-hidden="true"></canvas>
+	<img id="santa" data-src="assets/animation/santa-sleigh.webp" alt="" aria-hidden="true" hidden>
+	<div id="lights" class="lights" aria-hidden="true"></div>
+	<main class="page">
+		<header class="hero">
+			<h1>Julebord</h1>
+			<p class="tagline">Meld deg på under, det er <small><small><small>(snart)</small></small></small> juuuuuuuuul!!!</p>
+		</header>
+		<section class="card" aria-label="Påmeldingsskjema">
+			<div class="card-inner">
+				<iframe id="msform"
+						title="Påmeldingsskjema for julebordet"
+						src="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=EhvwxPeEl02wiuoL0cb_IdmiZcYU9vRNrapM2vgDMxNUQjhWWkJSSDBUTFgzNkJUNjJKV1pWNkExNyQlQCN0PWcu&embed=true"
+						frameborder="0"
+						marginwidth="0"
+						marginheight="0"
+						allowfullscreen
+						webkitallowfullscreen
+						mozallowfullscreen
+						msallowfullscreen
+				></iframe>
+			</div>
+		</section>
+		<p class="pill fallback">
+			Lastes ikke skjemaet?
+			<a	href="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=EhvwxPeEl02wiuoL0cb_IdmiZcYU9vRNrapM2vgDMxNUQjhWWkJSSDBUTFgzNkJUNjJKV1pWNkExNyQlQCN0PWcu"
+				target="_blank"
+				rel="noopener"
+			>Åpne det i en ny fane.</a>
+		</p>
+		<footer class="pill credits">
+			<span>&#9834; <span id="now-playing">Julemusikk</span></span>
+			<span class="dot" aria-hidden="true">&middot;</span>
+			<span id="now-playing-artist"></span>
+		</footer>
+	</main>
+	<canvas id="snow-front-canvas" aria-hidden="true"></canvas>
+	<div class="menu">
+		<button id="music-toggle" class="menu-button" type="button" aria-pressed="false" aria-label="Musikk">
+			<svg class="icon-on" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+				<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 7.97v8.05A4.5 4.5 0 0 0 16.5 12zM14 3.23v2.06a7 7 0 0 1 0 13.42v2.06a9 9 0 0 0 0-17.54z" />
+			</svg>
+			<svg class="icon-off" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+				<path d="M16.5 12A4.5 4.5 0 0 0 14 7.97v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51A8.8 8.8 0 0 0 21 12a9 9 0 0 0-7-8.77v2.06A7 7 0 0 1 19 12zM4.27 3 3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06a9 9 0 0 0 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4 9.91 6.09 12 8.18V4z" />
+			</svg>
+		</button>
+		<button id="menu-toggle" class="menu-button" type="button" aria-expanded="false" aria-controls="menu-panel"
+			aria-label="Innstillinger">
+			<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+				<circle cx="5" cy="12" r="2.2" />
+				<circle cx="12" cy="12" r="2.2" />
+				<circle cx="19" cy="12" r="2.2" />
+			</svg>
+		</button>
+		<div id="menu-panel" class="menu-panel" role="menu" hidden>
+			<label class="menu-row">
+				<span>Musikk</span>
+				<input type="checkbox" id="toggle-music" />
+			</label>
+			<label class="menu-row">
+				<span>Snø</span>
+				<input type="checkbox" id="toggle-snow" checked />
+			</label>
+			<label class="menu-row">
+				<span>Lys</span>
+				<input type="checkbox" id="toggle-lights" checked />
+			</label>
+			<label class="menu-row" title="Gjelder neste gang du åpner siden">
+				<span>Åpningsskjerm</span>
+				<input type="checkbox" id="toggle-splash" />
+			</label>
+			<button type="button" class="menu-link" id="open-attributions">Attribusjoner</button>
+		</div>
+	</div>
+	<button id="music-hint" class="music-hint" type="button" hidden>
+		<span aria-hidden="true">&#127925;</span> Trykk hvor som helst for julemusikk.
+	</button>
+	<div id="blocked-toast" class="toast" role="status" hidden>
+		<p>Det virker som at snøen og musikken ble blokkert. Om du har en adblocker så må du trolig deaktivere den for at disse effektene skal fungere. Skjemaet burde fungere. :)</p>
+		<button id="blocked-toast-close" class="toast-close" type="button" aria-label="Lukk">&times;</button>
+	</div>
+	<div id="attributions-dialog" class="dialog-backdrop" hidden>
+		<div class="dialog" role="dialog" aria-modal="true" aria-labelledby="attributions-title">
+			<div class="dialog-inner">
+				<div class="dialog-header">
+					<h2 id="attributions-title">Attribusjoner</h2>
+					<button id="attributions-close" class="dialog-close" type="button" aria-label="Lukk">&times;</button>
+				</div>
+				<div class="dialog-body" id="attributions-body"></div>
+			</div>
+		</div>
+	</div>
+	<script src="data/attributions.js"></script>
+	<script src="script/snow.js"></script>
+	<script src="script/scenery.js"></script>
+	<script src="script/santa.js"></script>
+	<script src="script/music.js"></script>
+	<script src="script/attributions.js"></script>
+	<script src="script/app.js"></script>
+</body>
+</html>

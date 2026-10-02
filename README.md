@@ -1,4 +1,4 @@
-Company annual Christmas party website for Hammerfest Energi AS and Lucerna AS.
+Company annual Christmas party website for Hammerfest Energi AS, Lucerna AS and Teneo AS.
 
 NB! You'll need an internal account to see the embedded Microsoft Forms sheet.
 
